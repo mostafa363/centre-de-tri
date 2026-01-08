@@ -1,0 +1,38 @@
+# Dépendances Node.js
+react-app/node_modules/
+node_modules/
+
+# Build React
+react-app/build/
+
+# Fichiers de données volumineux
+data/train.csv
+data/test.csv
+data/sample_submission.csv
+data/images/
+*.csv
+
+# Modèles (trop volumineux)
+models/*.rds
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.Rproj.user
+.Rhistory
+.RData
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+
+# Outputs (peuvent être régénérés)
+outputs/*.png
+outputs/*.pdf
