@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Canvas from './components/Canvas';
 import Result from './components/Result';
 import ModelComparison from './components/ModelComparison';
+import PredictionsHistory from './components/PredictionsHistory';
 import { predictDigit } from './services/api';
 
 function App() {
@@ -26,6 +27,23 @@ function App() {
           </button>
         </header>
         <ModelComparison />
+      </div>
+    );
+  }
+
+  if (currentPage === 'history') {
+    return (
+      <div className="app">
+        <header className="header">
+          <h1>🔢 Digit Recognition</h1>
+          <button 
+            className="nav-btn"
+            onClick={() => setCurrentPage('home')}
+          >
+            ← Back to Predictor
+          </button>
+        </header>
+        <PredictionsHistory />
       </div>
     );
   }
@@ -237,6 +255,22 @@ function App() {
             <div className="label">Input</div>
             <div className="value">28×28 px</div>
           </div>
+        </div>
+        
+        {/* Navigation Buttons */}
+        <div style={{ marginTop: '30px', display: 'flex', gap: '15px', justifyContent: 'center' }}>
+          <button 
+            className="nav-btn"
+            onClick={() => setCurrentPage('comparison')}
+          >
+            📊 View Model Comparison
+          </button>
+          <button 
+            className="nav-btn"
+            onClick={() => setCurrentPage('history')}
+          >
+            📜 View Predictions History
+          </button>
         </div>
       </section>
 

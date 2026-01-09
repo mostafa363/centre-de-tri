@@ -8,6 +8,26 @@ library(jsonlite)
 library(e1071)  # For SVM models
 library(randomForest)  # For Random Forest models
 library(rpart)  # For Decision Tree models
+library(mongolite)  # For MongoDB
+
+# MongoDB Configuration
+MONGO_URI <- Sys.getenv("MONGO_URI", "mongodb://localhost:27017")
+MONGO_DB <- "digit_recognition"
+MONGO_COLLECTION <- "predictions"
+
+# Try to connect to MongoDB (optional - won't crash if not available)
+mongo_conn <- NULL
+tryCatch({
+  mongo_conn <- mongo(
+    collection = MONGO_COLLECTION,
+    db = MONGO_DB,
+    url = MONGO_URI
+  )
+  cat("✅ MongoDB connected\n")
+}, error = function(e) {
+  cat("⚠️  MongoDB not available (predictions won't be saved):\n")
+  cat("   ", conditionMessage(e), "\n")
+})
 
 # Charger le modèle
 models_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/models/"
@@ -116,11 +136,29 @@ function(req) {
       confidence <- 75
     }
     
-    list(
+    # Prepare result
+    result <- list(
       success = TRUE,
       prediction = as.integer(as.character(prediction)),
       confidence = round(confidence, 2)
     )
+    
+    # Save to MongoDB if available
+    if (!is.null(mongo_conn)) {
+      tryCatch({
+        mongo_conn$insert(data.frame(
+          prediction = result$prediction,
+          confidence = result$confidence,
+          timestamp = Sys.time(),
+          model_type = class(model)[1],
+          stringsAsFactors = FALSE
+        ))
+      }, error = function(e) {
+        cat("⚠️  Failed to save to MongoDB:", conditionMessage(e), "\n")
+      })
+    }
+    
+    result
     
   }, error = function(e) {
     list(
@@ -145,4 +183,102 @@ function() {
     input_size = 784,
     output_classes = 0:9
   )
+}
+
+#* Get prediction history
+#* @get /predictions/history
+#* @param limit:int Limit number of results (default: 50)
+function(limit = 50) {
+  if (is.null(mongo_conn)) {
+    return(list(
+      success = FALSE,
+      error = "MongoDB not available"
+    ))
+  }
+  
+  tryCatch({
+    limit <- as.integer(limit)
+    history <- mongo_conn$find(
+      query = '{}',
+      sort = '{"timestamp": -1}',
+      limit = limit
+    )
+    
+    list(
+      success = TRUE,
+      count = nrow(history),
+      predictions = history
+    )
+  }, error = function(e) {
+    list(
+      success = FALSE,
+      error = as.character(e$message)
+    )
+  })
+}
+
+#* Get prediction statistics
+#* @get /predictions/stats
+function() {
+  if (is.null(mongo_conn)) {
+    return(list(
+      success = FALSE,
+      error = "MongoDB not available"
+    ))
+  }
+  
+  tryCatch({
+    all_predictions <- mongo_conn$find('{}')
+    
+    if (nrow(all_predictions) == 0) {
+      return(list(
+        success = TRUE,
+        total_predictions = 0,
+        digit_distribution = list(),
+        avg_confidence = 0
+      ))
+    }
+    
+    # Calculate statistics
+    digit_counts <- table(all_predictions$prediction)
+    avg_conf <- mean(all_predictions$confidence, na.rm = TRUE)
+    
+    list(
+      success = TRUE,
+      total_predictions = nrow(all_predictions),
+      digit_distribution = as.list(digit_counts),
+      avg_confidence = round(avg_conf, 2),
+      most_predicted = as.integer(names(which.max(digit_counts))),
+      model_type = unique(all_predictions$model_type)[1]
+    )
+  }, error = function(e) {
+    list(
+      success = FALSE,
+      error = as.character(e$message)
+    )
+  })
+}
+
+#* Clear prediction history
+#* @delete /predictions/clear
+function() {
+  if (is.null(mongo_conn)) {
+    return(list(
+      success = FALSE,
+      error = "MongoDB not available"
+    ))
+  }
+  
+  tryCatch({
+    result <- mongo_conn$drop()
+    list(
+      success = TRUE,
+      message = "Prediction history cleared"
+    )
+  }, error = function(e) {
+    list(
+      success = FALSE,
+      error = as.character(e$message)
+    )
+  })
 }
