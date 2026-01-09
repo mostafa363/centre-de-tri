@@ -7,7 +7,7 @@ const Canvas = ({ onCanvasReady }) => {
 
   // Configuration du canvas
   const canvasSize = 280; // 280x280 pour un meilleur dessin (10x MNIST)
-  const lineWidth = 15;
+  const lineWidth = 20; // Thicker line for better MNIST-like digits
   const lineColor = 'white';
 
   useEffect(() => {

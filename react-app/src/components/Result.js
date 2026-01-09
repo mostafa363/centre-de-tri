@@ -36,14 +36,18 @@ const Result = ({ prediction, confidence, loading, error }) => {
   }
 
   // Afficher le résultat
+  const confidenceValue = parseFloat(confidence) || 0;
+  
   return (
     <div className="result-box">
       <div className="prediction-digit">{prediction}</div>
-      <p className="confidence">Confiance: {confidence.toFixed(1)}%</p>
+      <p className="confidence">
+        Confiance: {confidenceValue.toFixed(1)}%
+      </p>
       <div className="confidence-bar">
         <div 
           className="confidence-fill" 
-          style={{ width: `${confidence}%` }}
+          style={{ width: `${confidenceValue}%` }}
         />
       </div>
     </div>

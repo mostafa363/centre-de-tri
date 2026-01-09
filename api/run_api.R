@@ -5,7 +5,7 @@
 library(plumber)
 
 # Chemin vers l'API
-api_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/api/plumber.R"
+api_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/api/plumber.R"
 
 # Créer et lancer l'API
 pr <- plumber::plumb(api_path)

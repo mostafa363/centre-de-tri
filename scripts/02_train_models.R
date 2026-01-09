@@ -29,7 +29,7 @@ packages_requis <- c(
 for (pkg in packages_requis) {
   if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
     cat("📥 Installation de", pkg, "...\n")
-    install.packages(pkg, quiet = TRUE)
+    install.packages(pkg, quiet = TRUE, repos = "https://cran.r-project.org")
     library(pkg, character.only = TRUE)
   } else {
     cat("✅", pkg, "\n")
@@ -45,9 +45,9 @@ cat("=" , rep("=", 49), "\n", sep = "")
 cat("📂 CHARGEMENT DES DONNÉES\n")
 cat("=" , rep("=", 49), "\n\n", sep = "")
 
-data_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/data/"
-models_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/models/"
-outputs_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/outputs/figures/"
+data_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/data/"
+models_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/models/"
+outputs_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/outputs/figures/"
 
 # Créer les dossiers si nécessaire
 dir.create(models_path, recursive = TRUE, showWarnings = FALSE)
@@ -78,19 +78,16 @@ y_full <- as.factor(y_full)
 cat("📊 Normalisation des pixels (0-1)...\n")
 X_full <- X_full / 255
 
-# ⚠️ Pour accélérer l'entraînement, on utilise un échantillon
-# Tu peux augmenter ce nombre pour de meilleurs résultats
-SAMPLE_SIZE <- 5000  # Nombre d'images pour l'entraînement
-TEST_SIZE <- 1000    # Nombre d'images pour le test
+# Use the FULL dataset for better accuracy
+cat("📊 Utilisation du DATASET COMPLET (42,000 images)\n")
+cat("   ⏱️  Ceci prendra plus de temps mais donnera de meilleurs résultats\n\n")
 
-cat("⚠️  Utilisation d'un échantillon pour accélérer:\n")
-cat("   - Train:", SAMPLE_SIZE, "images\n")
-cat("   - Test:", TEST_SIZE, "images\n")
-
+# Split 80% train, 20% test
 set.seed(42)
-indices <- sample(1:nrow(X_full), SAMPLE_SIZE + TEST_SIZE)
-train_indices <- indices[1:SAMPLE_SIZE]
-test_indices <- indices[(SAMPLE_SIZE + 1):(SAMPLE_SIZE + TEST_SIZE)]
+train_size <- floor(0.8 * nrow(X_full))
+indices <- sample(1:nrow(X_full))
+train_indices <- indices[1:train_size]
+test_indices <- indices[(train_size + 1):length(indices)]
 
 X_train <- X_full[train_indices, ]
 y_train <- y_full[train_indices]

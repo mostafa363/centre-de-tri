@@ -27,7 +27,7 @@ cat("📊 EXPLORATION DU DATASET MNIST\n")
 cat("=" , rep("=", 49), "\n\n", sep = "")
 
 # Définir le chemin vers les données
-data_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/data/"
+data_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/data/"
 
 # Charger les données d'entraînement
 cat("📥 Chargement des données d'entraînement...\n")
@@ -145,7 +145,7 @@ plot_digit(pixels_image, label_image,
            title = paste("Question 1a - Chiffre:", label_image, "(index:", index_aleatoire, ")"))
 
 # Sauvegarder la figure
-output_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/outputs/figures/"
+output_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/outputs/figures/"
 dir.create(output_path, recursive = TRUE, showWarnings = FALSE)
 png(paste0(output_path, "Q1a_image_aleatoire.png"), width = 400, height = 400)
 par(mar = c(1, 1, 3, 1))

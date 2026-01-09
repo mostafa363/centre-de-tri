@@ -23,9 +23,9 @@ cat("=" , rep("=", 49), "\n\n", sep = "")
 # 📂 CHARGEMENT DES DONNÉES ET MODÈLE
 # -----------------------------------------------
 
-data_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/data/"
-models_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/models/"
-outputs_path <- "c:/Users/SURFACEE/Desktop/CENTRE  de tri/outputs/figures/"
+data_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/data/"
+models_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/models/"
+outputs_path <- "c:/Users/Me/Desktop/RH/centre-de-tri/outputs/figures/"
 
 # Charger les données
 cat("📥 Chargement des données...\n")
